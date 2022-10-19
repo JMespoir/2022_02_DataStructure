@@ -39,7 +39,7 @@ int** make2Darray(char * filename,int* row, int *col){  //O(n^2)
     FILE* fp=fopen(filename,"r");
     int** ary;
     int num;
-    fscanf(fp,"%d %d",*row,*col);
+    fscanf(fp,"%d %d",row,col);
     ary = (int**)malloc(sizeof(int*)*(*row));
     for(int i=0;i<*row;i++){
         ary[i]= (int*)malloc(sizeof(int)*(*col));
@@ -47,7 +47,7 @@ int** make2Darray(char * filename,int* row, int *col){  //O(n^2)
 
     for(int i =0;i<*row;i++){
         for(int j=0;j<*col;j++){
-            fscanf(fp,"%d",ary[i][j]);
+            fscanf(fp,"%d",&ary[i][j]);
         }
     }
     fclose(fp);
@@ -56,5 +56,17 @@ int** make2Darray(char * filename,int* row, int *col){  //O(n^2)
 
 void makeTheFile(char* filename,int** array,int row, int col){
     FILE* fp = fopen(filename,"w");
-    
+    for(int i =0;i<col;i++){
+        for (int j=0;j<row;j++){
+            fprintf(fp,"%d ",array[j][i]);
+        }
+        fprintf(fp,"\n");
+    }
+
+
+    for(int i=0;i<row;i++){
+        free(array[i]);
+
+    }
+    free(array);
 }
