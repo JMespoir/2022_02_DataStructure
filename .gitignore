@@ -1,5 +1,5 @@
-*./txt
-*./ilk
-*./exe
-*./obj
-*./pdb
+*.txt
+*.ilk
+*.exe
+*.obj
+*.pdb
