@@ -15,12 +15,12 @@ int deQ(int *Q, int* front,int size);
 int main(){
     char file[FILENAME];
     while(1){
-        printf("FILENAME >>");
+        printf("FILENAME( if you input \"exit\", program EXIT ) >>  ");
         scanf("%s",file);
         if(!strcmp(file,"exit")){
             break;
         }
-        printf("[%s]",file);
+        printf("[%s]\n",file);
         FILESTART(file);
         printf("\n\n");
     }
@@ -31,7 +31,7 @@ void FILESTART(char *filename){
     int size, rear = 0, front =0,num;
     FILE* fp = fopen(filename,"r");
     if(!fp){
-        printf("\n--Cannot find the File--\n");
+        printf("--Cannot find the File--\n");
         exit(0);
     }
     int* queue;
