@@ -24,9 +24,9 @@ void Infile(char* filename, char** infix,int* count);
 int ChangePostfix(char* infix, char* postfix);
 void value(char* postfix);
 void printnotaion(char* notaion);
-int checkNum(char);
-int checkOp_num(char);
-char checknum_Op(int);
+int checkNum(char n);
+int checkOp_num(char n);
+char checknum_Op(int n);
 
 int main(){
     char in[20];
