@@ -2,7 +2,6 @@
 #define CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
-
 #define MAX_STACK_SIZE 100
 #define MAX_FILENAME 20
 
@@ -31,15 +30,15 @@ enum{
 
 element stack[MAX_STACK_SIZE];
 int top = -1;
-int** makemaze(FILE*,int*,int*,location*,location*);
-void printmaze(int**,int,int);
-void pathprintmaze(char **,int ,int);
-char** pathmaze(int**,int,int,location,location);
-void push(element);
+int** makemaze(FILE* file_point, int* row_size, int* col_size, location* start_point, location* finish_point);
+void printmaze(int** maze,int row_size,int col_size);
+void pathprintmaze(char** maze,int row_size,int col_size);
+char** pathmaze(int** maze,int row_size,int col_size,location start_point,location finish_point);
+void push(element item);
 element pop();
 int isEmpty();
-int isFinish(location,location);
-void MAZE(char []);
+int isFinish(location next,location finish);
+void MAZE(char filename[]);
 
 int main(){
 
