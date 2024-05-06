@@ -1,117 +1,197 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-#define MAX_SIZE 1000
-#define FILE_SIZE 100
-typedef struct poly
-{
-    float coef;
-    int expon;
-}poly;
+#define MAX_SIZE 100
 
-void inPoly(char* filename, poly* p, int* count);
-void printpoly(poly* p, int count);
-void ADDpoly(poly* A, poly* B, poly* C,int a, int b,int* c);
+typedef struct Polynomial{
+  int expon;
+  float coef;
+}P;
+
+void inPoly(char* filename, P* p, int* count);
+void printpoly(P* p, int count);
+void ADDpoly(P* A, P* B, P* C,int a, int b,int* c);
 int COMPARE(int a, int b);
+void Minuspoly(P* A, P* B, P* C,int a, int b,int* c);
 
-int main(){
-    int a=0,b=0,c=0;
-    poly A[MAX_SIZE],B[MAX_SIZE],C[MAX_SIZE];
-    char in[FILE_SIZE];
+int main(void){
+  char filename[MAX_SIZE];
+  int a,b,c,d;
+  P A[MAX_SIZE],B[MAX_SIZE],C[MAX_SIZE],D[MAX_SIZE];
 
-    printf("A(x) <=");
-    scanf("%s",in);
-    inPoly(in,A,&a);
+  printf("Enter A FileName << ");
+  scanf("%s",filename);
+  inPoly(filename,A,&a);
 
-    printf("B(x) <=");
-    scanf("%s",in);
-    inPoly(in,B,&b);
+  printf("Enter B FileName << ");
+  scanf("%s",filename);
+  inPoly(filename,B,&b);
 
-    printf("A(x):");
-    printpoly(A,a);
-    
-    printf("B(x):");
-    printpoly(B,b);
+  printf("Polynomial A >>\n");
+  printpoly(A,a);
 
-    ADDpoly(A,B,C,a,b,&c);
-    printf("\nC(x):");
-    printpoly(C,c);
-    
+  printf("Polynomial B >>\n");
+  printpoly(B,b);
+
+  ADDpoly(A,B,C,a,b,&c);
+  Minuspoly(A,B,D,a,b,&d);
+
+  printf("Polynomial A+B >>\n");
+  printpoly(C,c);
+
+  printf("Polynomial A-B >>\n");
+  printpoly(D,d);
+
+  
 }
 
-void inPoly(char* filename, poly* p, int* count){
-    FILE* fp = fopen(filename,"r");
-    int i =0;
-    while(!feof(fp)){
-        fscanf(fp,"%f %d",&p[i].coef,&p[i].expon);
-        i++;
+void inPoly(char* filename, P* p, int* count){
+  FILE* fp = fopen(filename,"r");
+  int index=0,inExpon;
+  float inCoef;
+  if(!fp){
+    printf("Not Find The File\n");
+    exit(0);
+  }
+  while(!feof(fp)){
+    fscanf(fp,"%f %d",&inCoef,&inExpon);
+    if(inCoef!=0){
+      p[index].coef = inCoef;
+      p[index].expon = inExpon;
+      index++;
     }
-    *count = i;
+  }
+  *count = index;
+}
+void printpoly(P* p, int count){
+  if(count ==0){
+    printf("0\n");
+    return;
+  }
+  for(int i=0;i<count-1;i++){
+    if(p[i].expon == 0){
+      printf("%.f",p[i].coef);
+
+      if(p[i+1].coef>0){
+        printf(" + ");
+      }
+      continue;
+    }
+
+    printf("%.fx^%d",p[i].coef,p[i].expon);
+
+    if(p[i+1].coef>0){
+      printf(" + ");
+    }
+  }
+
+  if(p[count-1].expon == 0){
+      printf("%.f\n",p[count-1].coef);
+      return;
+  }
+  printf("%.fx^%d\n",p[count-1].coef,p[count-1].expon);
+
+}
+void ADDpoly(P* A, P* B, P* C,int a, int b,int* c){
+  int indexA=0,indexB=0,indexC=0;
+  float temCoef;
+  while(indexA!=a && indexB!=b){
+    switch (COMPARE(A[indexA].expon,B[indexB].expon))
+    {
+    case 1://A>B
+      C[indexC].coef = B[indexB].coef;
+      C[indexC].expon = B[indexB].expon;
+      indexB++;
+      indexC++;
+      break;
+    case 0: // A==B
+      temCoef = A[indexA].coef + B[indexB].coef;
+      if(temCoef){
+        C[indexC].coef = temCoef;
+        C[indexC].expon = A[indexA].expon;
+        indexC++;
+      }
+      indexB++;
+      indexA++;
+      break;
+    case -1:// A<B
+      C[indexC].coef = A[indexA].coef;
+      C[indexC].expon = A[indexA].expon;
+      indexA++;
+      indexC++;
+      break;
+    }
+  }
+  while(indexA!=a){
+    C[indexC].coef = A[indexA].coef;
+    C[indexC].expon = A[indexA].expon;
+    indexA++;
+    indexC++;
+  }
+  while(indexB!=b){
+    C[indexC].coef = B[indexB].coef;
+    C[indexC].expon = B[indexB].expon;
+    indexB++;
+    indexC++;
+  }
+  *c = indexC;
+
 }
 
-void printpoly(poly* p, int count){
-    if(count ==0){
-        printf("0");
+void Minuspoly(P* A, P* B, P* C,int a, int b,int* c){
+  int indexA=0,indexB=0,indexC=0;
+  float temCoef;
+  while(indexA!=a && indexB!=b){
+    switch (COMPARE(A[indexA].expon,B[indexB].expon))
+    {
+    case 1://A>B
+      C[indexC].coef = -B[indexB].coef;
+      C[indexC].expon = B[indexB].expon;
+      indexB++;
+      indexC++;
+      break;
+    case 0: // A==B
+      temCoef = A[indexA].coef - B[indexB].coef;
+      if(temCoef){
+        C[indexC].coef = temCoef;
+        C[indexC].expon = A[indexA].expon;
+        indexC++;
+      }
+      indexB++;
+      indexA++;
+      break;
+    case -1:// A<B
+      C[indexC].coef = A[indexA].coef;
+      C[indexC].expon = A[indexA].expon;
+      indexA++;
+      indexC++;
+      break;
     }
-    for(int i =0;i<count;i++){
-        if(i != count-1){
-            printf("%.fx^%d + ",p[i].coef,p[i].expon);
-        }
-        else{
-            printf("%.fx^%d",p[i].coef,p[i].expon);
-        }
-    }
-    printf("\n");
+  }
+  while(indexA!=a){
+    C[indexC].coef = A[indexA].coef;
+    C[indexC].expon = A[indexA].expon;
+    indexA++;
+    indexC++;
+  }
+  while(indexB!=b){
+    C[indexC].coef = -B[indexB].coef;
+    C[indexC].expon = B[indexB].expon;
+    indexB++;
+    indexC++;
+  }
+  *c = indexC;
+
 }
-
-void ADDpoly(poly* A, poly* B,poly* C, int a, int b,int*c){
-    int indexc =0;
-    int indexa =0, indexb= 0;
-    float sub;
-    while(indexa<a && indexb<b){
-        switch (COMPARE(A[indexa].expon,B[indexb].expon))
-        {
-            case 1:
-                C[indexc].expon = B[indexb].expon;
-                C[indexc++].coef = -B[indexb++].coef;
-                break;
-            case 0:
-                sub = A[indexa].coef - B[indexb].coef;
-                if(sub){
-                    C[indexc].expon = B[indexb].expon;
-                    C[indexc++].coef = sub;
-                }
-                indexa++;
-                indexb++;
-                break;
-            case -1:
-                C[indexc].expon = A[indexa].expon;
-                C[indexc++].coef = A[indexa++].coef;
-
-        }
-    }
-    for(;indexa<a;indexa++){
-        C[indexc].expon = A[indexa].expon;
-        C[indexc++].coef = A[indexa].coef;
-    }
-    for(;indexb<b;indexb++){
-        C[indexc].expon = B[indexb].expon;
-        C[indexc++].coef = B[indexb].coef;
-    }
-    *c = indexc; 
-}
-
 
 
 int COMPARE(int a, int b){
-    if(a>b){
-        return 1;
-    }
-    else if(a == b){
-        return 0;
-    }
-    else{
-        return -1;
-    }
+  if(a>b){
+    return 1;
+  }
+  if(a==b){
+    return 0;
+  }
+  return -1;
 }
-
-
